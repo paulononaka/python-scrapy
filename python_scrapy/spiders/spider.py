@@ -5,8 +5,7 @@ from scrapy import FormRequest
 class FaraSpider(scrapy.Spider):
     name = 'fara'
     start_urls = [
-        'https://efile.fara.gov/ords/"'
-        'f?p=171:130:0::NO:RP,130:P130_DATERANGE:N',
+        'https://efile.fara.gov/ords/f?p=171:130:0::NO:RP,130:P130_DATERANGE:N',
     ]
 
     def parse(self, response):
@@ -14,12 +13,8 @@ class FaraSpider(scrapy.Spider):
         # inspect_response(response, self)
 
         p_instance = response.xpath('//input[@id="pInstance"]/@value').get()
-        p_request = response.xpath(
-            '/html/body/script[2]/text()',
-        ).re(r'ajaxIdentifier":"(.*)"')[1]
-        p_page_submission_id = response.xpath(
-            '//input[@id="pPageSubmissionId"]/@value',
-        ).get()
+        p_request = response.xpath('/html/body/script[2]/text()').re(r'ajaxIdentifier":"(.*)"')[1]
+        p_page_submission_id = response.xpath('//input[@id="pPageSubmissionId"]/@value').get()
 
         return FormRequest(
             url='https://efile.fara.gov/ords/wwv_flow.ajax',
