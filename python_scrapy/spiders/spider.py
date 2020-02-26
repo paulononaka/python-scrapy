@@ -1,5 +1,6 @@
 import scrapy
 from scrapy import FormRequest
+# from scrapy.shell import inspect_response
 
 
 class FaraSpider(scrapy.Spider):
@@ -36,11 +37,16 @@ class FaraSpider(scrapy.Spider):
         )
 
     def after_repage(self, response):
-        from scrapy.shell import inspect_response
-        inspect_response(response, self)
-        # for quote in response.css('div.quote'):
-        #     yield {
-        #         'text': quote.css('span.text::text').get(),
-        #         'author': quote.css('small.author::text').get(),
-        #         'tags': quote.css('div.tags a.tag::text').getall(),
-        #     }
+        # inspect_response(response, self)
+        for tr in response.css('.a-IRR-table tr'):
+            yield {
+                'url': tr.css("td[headers='LINK'] a::attr(href)").get(),
+                'country': tr.css("td[headers='COUNTRY_NAME']::text").get(),
+                'state': tr.css("td[headers='STATE']::text").get(),
+                'reg_num': tr.css("td[headers='REG_NUMBER']::text").get(),
+                'address': tr.css("td[headers='ADDRESS_1']::text").get(),
+                'foreign_principal': tr.css("td[headers='FP_NAME']::text").get(),
+                'date': tr.css("td[headers='FP_REG_DATE']::text").get(),
+                'registrant': tr.css("td[headers='REGISTRANT_NAME']::text").get(),
+                'exhibit_url': tr.css("td[headers='ccc']::text").get(),
+            }
