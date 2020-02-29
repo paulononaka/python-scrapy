@@ -1,6 +1,8 @@
 import scrapy
 from scrapy import FormRequest
-# from scrapy.shell import inspect_response
+from scrapy.loader import ItemLoader
+
+from python_scrapy.items import ActiveForeignPrincipal
 
 
 class FaraSpider(scrapy.Spider):
@@ -38,40 +40,27 @@ class FaraSpider(scrapy.Spider):
         yield FormRequest(
             url=self.ajax_url,
             formdata=self.formdata('BREAK'),
-            callback=self.after_repage,
-        )
-
-    def after_repage(self, response):
-        for tr in response.css('.a-IRR-table tr'):
-            yield {
-                'url': tr.css("td[headers='LINK'] a::attr(href)").get(),
-                'country': tr.css("td[headers='COUNTRY_NAME']::text").get(),
-                'state': tr.css("td[headers='STATE']::text").get(),
-                'reg_num': tr.css("td[headers='REG_NUMBER']::text").get(),
-                'address': tr.css("td[headers='ADDRESS_1']::text").get(),
-                'foreign_principal': tr.css("td[headers='FP_NAME']::text").get(),
-                'date': tr.css("td[headers='FP_REG_DATE']::text").get(),
-                'registrant': tr.css("td[headers='REGISTRANT_NAME']::text").get(),
-                'exhibit_url': tr.css("td[headers='ccc']::text").get(),
-            }
-
-        yield FormRequest(
-            url=self.ajax_url,
-            formdata=self.formdata('PAGE', 'pgR_min_row=16max_rows=15rows_fetched=15'),
             callback=self.next_page,
         )
 
     def next_page(self, response):
-        # inspect_response(response, self)
-        for tr in response.css('.a-IRR-table tr'):
-            yield {
-                'url': tr.css("td[headers='LINK'] a::attr(href)").get(),
-                'country': tr.css("td[headers='COUNTRY_NAME']::text").get(),
-                'state': tr.css("td[headers='STATE']::text").get(),
-                'reg_num': tr.css("td[headers='REG_NUMBER']::text").get(),
-                'address': tr.css("td[headers='ADDRESS_1']::text").get(),
-                'foreign_principal': tr.css("td[headers='FP_NAME']::text").get(),
-                'date': tr.css("td[headers='FP_REG_DATE']::text").get(),
-                'registrant': tr.css("td[headers='REGISTRANT_NAME']::text").get(),
-                'exhibit_url': tr.css("td[headers='ccc']::text").get(),
-            }
+        for tr in response.xpath("//table[contains(@class, 'a-IRR-table')]//tr[not(th)]"):
+            item = ItemLoader(item=ActiveForeignPrincipal(), response=response, selector=tr)
+            item.add_css('url', "td[headers='LINK'] a::attr(href)")
+            item.add_css('country', "td[headers='COUNTRY_NAME']::text")
+            item.add_css('state', "td[headers='STATE']::text")
+            item.add_css('reg_num', "td[headers='REG_NUMBER']::text")
+            item.add_css('address', "td[headers='ADDRESS_1']::text")
+            item.add_css('foreign_principal', "td[headers='FP_NAME']::text")
+            item.add_css('date', "td[headers='FP_REG_DATE']::text")
+            item.add_css('registrant', "td[headers='REGISTRANT_NAME']::text")
+            item.add_css('exhibit_url', "td[headers='ccc']::text")
+            yield item.load_item()
+
+        p_widget_action_mod = response.xpath("//button[contains(@title, 'Next')]/@data-pagination").get()
+
+        yield FormRequest(
+            url=self.ajax_url,
+            formdata=self.formdata('PAGE', p_widget_action_mod),
+            callback=self.next_page,
+        )

@@ -1,11 +1,15 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-import scrapy
+from scrapy import Field
+from scrapy import Item
+from scrapy.loader.processors import TakeFirst
 
 
-class PythonScrapyItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class ActiveForeignPrincipal(Item):
+    url = Field(output_processor=TakeFirst())
+    country = Field(output_processor=TakeFirst())
+    state = Field(output_processor=TakeFirst())
+    reg_num = Field(output_processor=TakeFirst())
+    address = Field(output_processor=TakeFirst())
+    foreign_principal = Field(output_processor=TakeFirst())
+    date = Field(output_processor=TakeFirst())
+    registrant = Field(output_processor=TakeFirst())
+    exhibit_url = Field(output_processor=TakeFirst())
