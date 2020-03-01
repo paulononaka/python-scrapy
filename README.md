@@ -13,7 +13,6 @@ A sample of how to extract data from a website with Python. We extract all activ
 
 ```
 pip install poetry
-poetry install --no-root
 poetry install
 ```
 
@@ -36,7 +35,3 @@ poetry run scrapy runspider python_scrapy/spiders/spider.py -o fara.json
 ...
 ]
 ```
-
-## Questions?
-
->I'm glad to answer, just ping me via email paulononaka@gmail.com 😄
