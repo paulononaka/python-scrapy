@@ -1,2 +1,0 @@
-Python & Scrapy sample
-======================

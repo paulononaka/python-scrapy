@@ -12,4 +12,4 @@ COPY . .
 
 RUN poetry install
 
-CMD [ "python", "python_scrapy" ]
+CMD [ "poetry run scrapy runspider python_scrapy/spiders/spider.py -o fara.json" ]
