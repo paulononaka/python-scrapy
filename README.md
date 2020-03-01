@@ -7,7 +7,7 @@
 </h2>
 <hr />
 
-A sample of how to extract data from a website with Python. We are extract all active foreign principals from [FARA](https://www.fara.gov/quick-search.html) with [Scrapy](https://scrapy.org).
+A sample of how to extract data from a website with Python. We extract all active foreign principals from [FARA](https://www.fara.gov/quick-search.html) with [Scrapy](https://scrapy.org).
 
 ### Setup
 
